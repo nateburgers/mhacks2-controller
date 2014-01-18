@@ -85,6 +85,24 @@ public class Main extends PApplet {
 
             PointButton button = new PointButton(x,_height - y, name, 0);
             _controlsByPage.get(0).add(button);
+
+            final String fuckIt = name;
+            final PointButton shipIt = button;
+
+
+            Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    Controller controller = new Controller();
+                    try {
+                        double temp = controller.getCityWeather(fuckIt).getTemp();
+                        shipIt.setTemperature((int)temp);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            new Thread(r).start();
         }
 
         smooth();
