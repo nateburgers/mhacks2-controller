@@ -12,17 +12,16 @@ public class ControllerTest {
         Controller c = new Controller();
         WundergroundWebcamResponse r = c.getCityLatestImage("CA/San_Fransisco");
 
-        System.out.println( r.webcams.length );
+        System.out.println( r.getImageUrls() );
 
 
-        for(WundergroundWebcamResponse.WebCam w : r.webcams ){
-            System.out.println( w.CURRENTIMAGEURL );
+
+
+        for( ForecastDay d : c.get10Day( "CA/San_Fransisco" ).getForcastDays() ){
+
+            System.out.println( d.getHigh()  +  "   " + d.getLow() + "  " + d.getIcon() );
+
         }
-
-
-
-        System.out.println(c.get10Day("CA/San_Fransisco"));
-         
 
 
 

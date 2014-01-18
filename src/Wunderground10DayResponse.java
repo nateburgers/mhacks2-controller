@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by lee on 1/18/14.
  */
@@ -5,6 +8,8 @@ public class Wunderground10DayResponse {
 
 
     Forecast forecast;
+
+
 
     class Forecast{
 
@@ -23,18 +28,9 @@ public class Wunderground10DayResponse {
 
             ForecastDay[] forecastday;
 
-            class ForecastDay{
-                String icon;
-                int period;
-                HighLow high;
-                HighLow low;
-            }
 
 
-            class HighLow{
-                int celsius;
-                int fahrenheit;
-            }
+
 
         }
 
@@ -45,12 +41,43 @@ public class Wunderground10DayResponse {
     }
 
 
-    public String toString(){
-        String s ="";
-        for(Forecast.SimpleForecast.ForecastDay d : this.forecast.simpleforecast.forecastday ){
-            s += d.icon + "  (" + d.high.fahrenheit + "F)\n";
+
+    public List<ForecastDay> getForcastDays(){
+        List<ForecastDay> lst = new ArrayList<ForecastDay>();
+
+        for( ForecastDay day : this.forecast.simpleforecast.forecastday ){
+            lst.add( day );
         }
-        return s;
+        return lst;
+
     }
+
 
 }
+
+
+class ForecastDay{
+    private String icon;
+    private int period;
+    private HighLow high;
+    private HighLow low;
+
+    public int getHigh() {
+        return high.fahrenheit;
+    }
+
+    public int getLow(){
+        return low.fahrenheit;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+
+    class HighLow{
+        int celsius;
+        int fahrenheit;
+    }
+}
+

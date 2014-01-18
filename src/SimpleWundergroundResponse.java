@@ -16,6 +16,14 @@ public class SimpleWundergroundResponse {
         }
     }
 
+    public double getTemp(){
+        return current_observation.temp_f;
+    }
+
+    public String getIcon(){
+        return current_observation.icon;
+    }
+
 
     public String toString(){
         return String.format("%s (%f f)", this.current_observation.icon, this.current_observation.temp_f );

@@ -61,7 +61,7 @@ public class Controller {
         String url = "http://api.wunderground.com/api/310edd12b9023998/forecast10day/q/" + locString + ".json";
 
         String json = getJson( url );
-        
+
         return gson.fromJson( json, Wunderground10DayResponse.class );
 
 
