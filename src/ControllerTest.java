@@ -10,8 +10,19 @@ public class ControllerTest {
         System.out.println( "Hello world");
 
         Controller c = new Controller();
-        Wunderground10DayResponse data = c.get10Day( "San_Fransisco", "CA");
-        System.out.println( data );
+        WundergroundWebcamResponse r = c.getCityLatestImage("CA/San_Fransisco");
+
+        System.out.println( r.webcams.length );
+
+
+        for(WundergroundWebcamResponse.WebCam w : r.webcams ){
+            System.out.println( w.CURRENTIMAGEURL );
+        }
+
+
+
+        System.out.println(c.get10Day("CA/San_Fransisco"));
+         
 
 
 
