@@ -45,6 +45,21 @@ public class Utils {
                 (vector.z / 1000.f));
     }
 
+    public static PVector easeToward(PVector a, PVector b, float percentage) {
+        float dx = b.x - a.x;
+        float dy = b.y - a.y;
+        return new PVector(
+                a.x + dx * percentage,
+                a.y + dy * percentage
+        );
+    }
+
+    public static float distance(PVector a, PVector b) {
+        float dx = b.x - a.x;
+        float dy = b.y - a.y;
+        return (float)Math.sqrt(dx*dx + dy*dy);
+    }
+
     public static PVector normalizedLeftHand(SimpleOpenNI context, int userId) {
         PVector victor = new PVector();
         context.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_LEFT_HAND, victor);

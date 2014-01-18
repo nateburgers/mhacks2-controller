@@ -68,6 +68,15 @@ public class Main extends PApplet {
             _pageControls.add(button);
         }
 
+        
+
+        for (int i=0; i < 50; i++) {
+            int x = (int) (Math.random() * _width);
+            int y = (int) (Math.random() * _height);
+            PointButton button = new PointButton(x,y);
+            _controlsByPage.get(0).add(button);
+        }
+
         smooth();
         frameRate(30.f);
         size(640, 480);
@@ -80,8 +89,6 @@ public class Main extends PApplet {
         rect(0,0,_width,_height);
 
         _context.update();
-
-        //System.out.println(loader.getResource("resources/us_map.png"));
         image(_background, 0, 0);
 
         PImage userImage = _context.userImage();
@@ -93,7 +100,6 @@ public class Main extends PApplet {
         for (IControl control : _pageControls) {
             control.update(_context, _users);
             control.drawInContext(this);
-            System.out.println("current page " + _currentPage);
         }
 
         for (IControl control : _controlsByPage.get(_currentPage)) {
