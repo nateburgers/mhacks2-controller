@@ -28,6 +28,9 @@ public class Main extends PApplet {
     private ArrayList<Set<IControl>> _controlsByPage;
 
     public Main() {
+
+        assert Utils.percentileInRange(0,100,55) == 0.55;
+
         _users = new HashSet<Integer>();
         _pageControls = new ArrayList<IControl>();
         _controlsByPage = new ArrayList<Set<IControl>>();
@@ -68,14 +71,33 @@ public class Main extends PApplet {
             _pageControls.add(button);
         }
 
-        
+        String[] capitals = Utils.capitals();
+        for (int i=0; i < capitals.length; i += 3) {
+            String name = capitals[i];
+            float latitude = Float.valueOf(capitals[i+1]);
+            float longitude = Float.valueOf(capitals[i+2]);
 
-        for (int i=0; i < 50; i++) {
-            int x = (int) (Math.random() * _width);
-            int y = (int) (Math.random() * _height);
-            PointButton button = new PointButton(x,y);
+            float latitudePercentile = Utils.percentileInRange(24.f, 49.f, latitude);
+            float longitudePercentile = Utils.percentileInRange(-124.f, -66.f, longitude);
+
+            System.out.println("latitude: " + latitude + " percentile: " + latitudePercentile);
+
+            int x = (int) (longitudePercentile * _width);
+            int y = (int) (latitudePercentile * _height);
+
+
+            System.out.println("x: " + x + " y: " + y);
+
+            PointButton button = new PointButton(x,_height - y);
             _controlsByPage.get(0).add(button);
         }
+
+//        for (int i=0; i < 50; i++) {
+//            int x = (int) (Math.random() * _width);
+//            int y = (int) (Math.random() * _height);
+//            PointButton button = new PointButton(x,y);
+//            _controlsByPage.get(0).add(button);
+//        }
 
         smooth();
         frameRate(30.f);
