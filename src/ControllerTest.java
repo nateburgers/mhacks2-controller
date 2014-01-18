@@ -10,13 +10,10 @@ public class ControllerTest {
         System.out.println( "Hello world");
 
         Controller c = new Controller();
+        Wunderground10DayResponse data = c.get10Day( "San_Fransisco", "CA");
+        System.out.println( data );
 
 
-        HashMap<String, SimpleWundergroundResponse> bcw = c.get_big_city_weather();
-        for( String k : bcw.keySet() ){
-            System.out.println( k );
-            System.out.println( bcw.get(k) );
-        }
 
     }
 }
