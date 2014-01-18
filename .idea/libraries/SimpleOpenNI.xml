@@ -1,7 +1,7 @@
 <component name="libraryTable">
-  <library name="httpcore-4.3.1">
+  <library name="SimpleOpenNI">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/lib/httpcore-4.3.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/SimpleOpenNI/library/SimpleOpenNI.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

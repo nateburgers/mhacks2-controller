@@ -32,10 +32,15 @@ public class PointButton implements IControl {
 
     private Set<ActionListener> _listeners;
 
-    public PointButton(int x, int y){
+    private String _cityName;
+    private int _temperature;
+
+    public PointButton(int x, int y, String cityName, int temperature){
         _position = new PVector(x,y);
         _movedPosition = new PVector(_position.x, _position.y);
         _listeners = new HashSet<ActionListener>();
+        _cityName = cityName;
+        _temperature = temperature;
     }
 
     public void update(SimpleOpenNI context, Set<Integer> userIds) {
@@ -53,6 +58,10 @@ public class PointButton implements IControl {
                 }
             }
         }
+    }
+
+    public void setTemperature(int temp) {
+        _temperature = temp;
     }
 
     public void addListener(ActionListener listener) {
@@ -94,5 +103,8 @@ public class PointButton implements IControl {
         applet.line(_position.x, _position.y, _movedPosition.x, _movedPosition.y);
         applet.fill(0);
         applet.ellipse(_movedPosition.x, _movedPosition.y, _diameter, _diameter);
+        applet.text(_cityName, _position.x - _diameter /2 - 10, _position.y - _diameter/2 - 5);
+        applet.fill(255);
+        applet.text(((Integer)_temperature).toString(), _position.x-_diameter/4, _position.y+_diameter/4);
     }
 }

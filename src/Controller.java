@@ -2,82 +2,90 @@
  * Created by nate on 1/18/14.
  */
 import java.io.*;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import javax.swing.text.Document;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
+
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.xml.sax.InputSource;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
-
-public class Controller{
+public class Controller {
+    private final Gson gson;
     String APIKEY = "310edd12b9023998";
     private final String USER_AGENT = "Mozilla/5.0";
 
+
     public Controller(){
+       gson = new GsonBuilder().setPrettyPrinting().create();
 
     }
-    public HashMap<String, Integer> get_big_city_weather() throws Exception{
-        String url = "http://api.wunderground.com/api/310edd12b9023998/conditions/q/CA/San_Francisco.xml";
-
-        HttpClient client = new DefaultHttpClient();
-        HttpGet request = new HttpGet(url);
-
-        // add request header
-        request.addHeader("User-Agent", USER_AGENT);
-
-        HttpResponse response = client.execute(request);
 
 
+    /**
+     * SF, NY, Ann Arbor, Miami, Chicago
+     * @return
+     * @throws Exception
+     */
+    public HashMap<String, SimpleWundergroundResponse> get_big_city_weather() throws Exception{
 
-        BufferedReader rd = new BufferedReader(
-                new InputStreamReader(response.getEntity().getContent()));
-        String totalLine = "";
-        String line = "";
-        while((line = rd.readLine()) != null){
-            totalLine += line;
+        String[] cities = { "CA/San_Fransisco", "MI/Ann_Arbor", "FL/Miami", "IL/Chicago" };
+
+        HashMap<String, SimpleWundergroundResponse> map = new HashMap<String, SimpleWundergroundResponse>();
+
+        for( String cityCode : cities ){
+
+            String url = "http://api.wunderground.com/api/310edd12b9023998/conditions/q/" + cityCode + ".json";
+
+            String json = getJson( url );
+
+
+
+            SimpleWundergroundResponse wres = gson.fromJson( json, SimpleWundergroundResponse.class );
+            map.put( cityCode, wres );
 
         }
-        System.out.println(totalLine);
-        return new HashMap<String, Integer>();
+
+        return map;
+
+
+
     }
 
 
 
-    public String get10Day() throws Exception{
-
-        String url = "http://api.wunderground.com/api/310edd12b9023998/forecast10day/q/CA/San_Francisco.json";
-
-        HttpClient client = new DefaultHttpClient();
-        HttpGet request = new HttpGet(url);
-
-        // add request header
-        request.addHeader("User-Agent", USER_AGENT);
-
-        HttpResponse response = client.execute(request);
+    public Wunderground10DayResponse get10Day( String locString ) throws Exception{
 
 
+        String url = "http://api.wunderground.com/api/310edd12b9023998/forecast10day/q/" + locString + ".json";
 
-        BufferedReader rd = new BufferedReader(
-                new InputStreamReader(response.getEntity().getContent()));
-        String totalLine = "";
-        String line = "";
-        while((line = rd.readLine()) != null){
-            totalLine += line;
+        String json = getJson( url );
 
-        }
-        return totalLine;
+        return gson.fromJson( json, Wunderground10DayResponse.class );
+
 
     }
+
+
+
+
+    public WundergroundWebcamResponse getCityLatestImage( String locString ) throws Exception{
+
+
+        String earl = "http://api.wunderground.com/api/310edd12b9023998/webcams/q/" + locString + ".json";
+        System.out.println( earl );
+        String json = getJson( earl );
+
+        WundergroundWebcamResponse richard = gson.fromJson( json,  WundergroundWebcamResponse.class );
+
+        return richard;
+
+
+
+    }
+
+
     public void printTestData() throws Exception{
 
         String url = "http://api.wunderground.com/api/310edd12b9023998/animatedradar/animatedsatellite/q/NY/New_York.gif?num=8&delay=25&interval=30";
@@ -105,5 +113,30 @@ public class Controller{
 
         out.close();
 
+    }
+
+
+
+    public String getJson( String url ) throws Exception{
+
+        HttpClient client = new DefaultHttpClient();
+        HttpGet request = new HttpGet(url);
+
+        // add request header
+        request.addHeader("User-Agent", USER_AGENT);
+
+        HttpResponse response = client.execute(request);
+
+
+
+        BufferedReader rd = new BufferedReader( new InputStreamReader(response.getEntity().getContent()));
+        String json = "";
+        String line = "";
+        while((line = rd.readLine()) != null){
+            json += line;
+
+        }
+
+        return json;
     }
 }
