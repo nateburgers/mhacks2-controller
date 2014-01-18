@@ -16,13 +16,17 @@ public class Button {
     private int _width;
     private int _height;
     private boolean _on = false;
-    private HashSet<ActionListener> _listeners;
+    private Set<ActionListener> _listeners;
 
     private PVector _entryVector;
     private boolean _active = false;
     private boolean _triggered = false;
 
-    private static float deltaZThreshold = 0.03f;
+    private static float deltaZThreshold = 0.05f;
+
+    public Button(Utils.Rect rect) {
+        this(rect.x, rect.y, rect.width, rect.height);
+    }
 
     public Button(int x, int y, int width, int height) {
         _x = x;

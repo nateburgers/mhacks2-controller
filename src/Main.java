@@ -16,24 +16,43 @@ public class Main extends PApplet {
     private SimpleOpenNI _context;
     private static int _width = 640;
     private static int _height = 480;
+    private static int _cellSize = _width / 8;
+    private static int _inset = 10;
     private Set<Integer> _users;
     private ArrayList<Button> _buttons;
-
-    private Slider _slider;
-    private Button _button;
+    private ArrayList<Slider> _sliders;
+    private Slider _volumeSlider;
 
     public Main() {
         _users = new HashSet<Integer>();
+        _buttons = new ArrayList<Button>();
+        _sliders = new ArrayList<Slider>();
 
-        _slider = Slider.HorizontalSlider(new Utils.Rect(300, 150, 100, 200));
-
-        _button = new Button(150, 150, 100, 100);
-        _button.addListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                System.out.println("this is so hawt.");
+        for (int i=0; i < 5; i++) {
+            for(int j=0; j < 5; j++) {
+                Button button = new Button(new Utils.Rect(i*_cellSize,
+                        j*_cellSize, _cellSize, _cellSize).inset(_inset));
+                button.addListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent actionEvent) {
+                        System.out.println("you touched me! eww");
+                    }
+                });
+                _buttons.add(button);
             }
-        });
+        }
+
+        for (int i=5; i<8; i++) {
+            Slider slider = Slider.VerticalSlider(new Utils.Rect(i * _cellSize,
+                    0, _cellSize, _cellSize * 5).inset(_inset));
+            _sliders.add(slider);
+            slider.setValue(0.5f);
+        }
+
+        _volumeSlider = Slider.HorizontalSlider(new Utils.Rect(
+                0, _cellSize*5, _cellSize*8, _cellSize
+        ).inset(_inset));
+        _volumeSlider.setValue(0.5f);
     }
 
     public static void main(String[] args) {
@@ -58,11 +77,17 @@ public class Main extends PApplet {
 
         image(_context.depthImage(), 0, 0);
 
-//        _button.update(_context, _users);
-//        _button.drawInContext(this);
+        for (Slider slider : _sliders) {
+            slider.update(_context, _users);
+            slider.drawInContext(this);
+        }
+        for (Button button : _buttons) {
+            button.update(_context, _users);
+            button.drawInContext(this);
+        }
 
-        _slider.update(_context, _users);
-        _slider.drawInContext(this);
+        _volumeSlider.update(_context, _users);
+        _volumeSlider.drawInContext(this);
 
         for(int userId : _users) {
             if (_context.isTrackingSkeleton(userId)) {
@@ -72,12 +97,12 @@ public class Main extends PApplet {
     }
 
     public void drawSkeleton(int userId) {
-        fill(255, 0, 0);
+        fill(255, 255, 0);
         PVector leftHandPosition = new PVector();
         _context.getJointPositionSkeleton(userId, SimpleOpenNIConstants.SKEL_LEFT_HAND, leftHandPosition);
         drawPoint(Utils.normalizedVector(leftHandPosition));
 
-        fill(0, 0, 255);
+        fill(0, 255, 255);
         PVector rightHandPosition = new PVector();
         _context.getJointPositionSkeleton(userId, SimpleOpenNIConstants.SKEL_RIGHT_HAND, rightHandPosition);
         drawPoint(Utils.normalizedVector(rightHandPosition));

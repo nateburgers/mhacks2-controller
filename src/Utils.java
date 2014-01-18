@@ -25,6 +25,18 @@ public class Utils {
             return x + width > vector.x && vector.x > x &&
                     y + height > vector.y && vector.y > y;
         }
+        public Rect inset(int inset){
+            return new Rect(this.x - inset,
+                    this.y - inset,
+                    this.width - inset*2,
+                    this.height - inset*2);
+        }
+        public Rect centered(PVector point) {
+            return new Rect((int)point.x - this.width / 2,
+                    (int)point.y - this.height / 2,
+                    this.width,
+                    this.height);
+        }
     }
 
     public static PVector normalizedVector(PVector vector) {
