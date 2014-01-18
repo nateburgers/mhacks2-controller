@@ -1,7 +1,7 @@
 <component name="libraryTable">
-  <library name="core">
+  <library name="SimpleOpenNI">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/lib/core.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/SimpleOpenNI/library/SimpleOpenNI.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

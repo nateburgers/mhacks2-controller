@@ -17,38 +17,66 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.xml.sax.InputSource;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class Controller{
+    private final Gson gson;
     String APIKEY = "310edd12b9023998";
     private final String USER_AGENT = "Mozilla/5.0";
 
+
     public Controller(){
+       gson = new GsonBuilder().setPrettyPrinting().create();
 
     }
-    public HashMap<String, Integer> get_big_city_weather() throws Exception{
-        String url = "http://api.wunderground.com/api/310edd12b9023998/conditions/q/CA/San_Francisco.xml";
-
-        HttpClient client = new DefaultHttpClient();
-        HttpGet request = new HttpGet(url);
-
-        // add request header
-        request.addHeader("User-Agent", USER_AGENT);
-
-        HttpResponse response = client.execute(request);
 
 
+    /**
+     * SF, NY, Ann Arbor, Miami, Chicago
+     * @return
+     * @throws Exception
+     */
+    public HashMap<String, SimpleWundergroundResponse> get_big_city_weather() throws Exception{
 
-        BufferedReader rd = new BufferedReader(
-                new InputStreamReader(response.getEntity().getContent()));
-        String totalLine = "";
-        String line = "";
-        while((line = rd.readLine()) != null){
-            totalLine += line;
+        String[] cities = { "CA/San_Fransisco", "MI/Ann_Arbor", "FL/Miami", "IL/Chicago" };
+
+        HashMap<String, SimpleWundergroundResponse> map = new HashMap<String, SimpleWundergroundResponse>();
+
+        for( String cityCode : cities ){
+
+            String url = "http://api.wunderground.com/api/310edd12b9023998/conditions/q/" + cityCode + ".json";
+
+            HttpClient client = new DefaultHttpClient();
+            HttpGet request = new HttpGet(url);
+
+            // add request header
+            request.addHeader("User-Agent", USER_AGENT);
+
+            HttpResponse response = client.execute(request);
+
+
+
+            BufferedReader rd = new BufferedReader(
+                    new InputStreamReader(response.getEntity().getContent()));
+            String totalLine = "";
+            String line = "";
+            while((line = rd.readLine()) != null){
+                totalLine += line;
+
+            }
+
+
+
+            SimpleWundergroundResponse wres = gson.fromJson( totalLine, SimpleWundergroundResponse.class );
+            map.put( cityCode, wres );
 
         }
-        System.out.println(totalLine);
-        return new HashMap<String, Integer>();
+
+        return map;
+
+
+
     }
 
 
