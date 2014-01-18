@@ -55,6 +55,18 @@ public class Controller {
 
 
 
+    public SimpleWundergroundResponse getCityWeather( String locString ) throws Exception{
+
+        String url = "http://api.wunderground.com/api/310edd12b9023998/conditions/q/" + locString + ".json";
+        String json = getJson( url );
+
+        SimpleWundergroundResponse res = gson.fromJson( json, SimpleWundergroundResponse.class );
+        return res;
+
+    }
+
+
+
     public Wunderground10DayResponse get10Day( String locString ) throws Exception{
 
 

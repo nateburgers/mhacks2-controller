@@ -7,9 +7,16 @@ public class ControllerTest {
 
     public static void main(String[] args) throws Exception{
 
-        System.out.println( "Hello world");
+
+
+
+
 
         Controller c = new Controller();
+
+        SimpleWundergroundResponse sr = c.getCityWeather( "FL/Miami");
+        System.out.println( "Floring: "  + sr + "    " + sr.getTemp() + "   " + sr.getIcon());
+
         WundergroundWebcamResponse r = c.getCityLatestImage("CA/San_Fransisco");
 
         System.out.println( r.getImageUrls() );
