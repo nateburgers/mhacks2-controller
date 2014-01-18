@@ -10,19 +10,25 @@ import java.util.*;
 /**
  * Created by nate on 1/18/14.
  */
-public class Button {
+public class Button implements IControl {
     private int _x;
     private int _y;
     private int _width;
     private int _height;
     private boolean _on = false;
-    private HashSet<ActionListener> _listeners;
+    private Set<ActionListener> _listeners;
 
     private PVector _entryVector;
     private boolean _active = false;
     private boolean _triggered = false;
 
-    private static float deltaZThreshold = 0.03f;
+    private Object _callbackData;
+
+    private static float deltaZThreshold = 0.05f;
+
+    public Button(Utils.Rect rect) {
+        this(rect.x, rect.y, rect.width, rect.height);
+    }
 
     public Button(int x, int y, int width, int height) {
         _x = x;
@@ -64,6 +70,15 @@ public class Button {
                 _y + _height > vector.y && vector.y > _y;
     }
 
+    public void setCallbackData(Object data) {
+        _callbackData = data;
+    }
+
+    public void setOn(boolean active) {
+        _triggered = active;
+        _on = active;
+    }
+
     public void addListener(ActionListener listener) {
         _listeners.add(listener);
     }
@@ -75,7 +90,6 @@ public class Button {
     private void handInFrame(PVector position) {
 
         if (!_triggered) {
-            System.out.println(_entryVector.z - position.z);
             if(_entryVector.z - position.z > deltaZThreshold) {
                 _triggered = true;
                 _on = !_on;

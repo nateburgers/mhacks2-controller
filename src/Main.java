@@ -16,24 +16,24 @@ public class Main extends PApplet {
     private SimpleOpenNI _context;
     private static int _width = 640;
     private static int _height = 480;
+    private static int _cellSize = _width / 8;
+    private static int _inset = 10;
     private Set<Integer> _users;
-    private ArrayList<Button> _buttons;
 
-    private Slider _slider;
-    private Button _button;
+    private PImage _background;
+
+    private static int _pages = 3;
+    private int _currentPage;
+    private ArrayList<IControl> _pageControls;
+    private ArrayList<Set<IControl>> _controlsByPage;
 
     public Main() {
         _users = new HashSet<Integer>();
-
-        _slider = Slider.HorizontalSlider(new Utils.Rect(300, 150, 100, 200));
-
-        _button = new Button(150, 150, 100, 100);
-        _button.addListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                System.out.println("this is so hawt.");
-            }
-        });
+        _pageControls = new ArrayList<IControl>();
+        _controlsByPage = new ArrayList<Set<IControl>>();
+        for(int i=0; i<_pages; i++) {
+            _controlsByPage.add(new HashSet<IControl>());
+        }
     }
 
     public static void main(String[] args) {
@@ -44,7 +44,29 @@ public class Main extends PApplet {
         _context = new SimpleOpenNI(this);
         _context.setMirror(true);
         _context.enableDepth();
+        _context.enableRGB();
         if (_context.enableUser(this)) System.out.println("farts");
+
+        ClassLoader loader = Main.class.getClassLoader();
+        _background = loadImage(loader.getResource("resources/us_map.png").toString());
+
+        for(int i=0; i<_pages; i++) {
+            Button button = new Button(
+                    new Utils.Rect(_cellSize*7,_cellSize*(i+1),_cellSize,_cellSize).inset(_inset));
+            button.addListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent actionEvent) {
+                    System.out.println("yay");
+                    _currentPage = _pageControls.indexOf(actionEvent.getSource());
+                    for (IControl control : _pageControls) {
+                        if (control != actionEvent.getSource()) {
+                            ((Button)control).setOn(false);
+                        }
+                    }
+                }
+            });
+            _pageControls.add(button);
+        }
 
         smooth();
         frameRate(30.f);
@@ -54,15 +76,30 @@ public class Main extends PApplet {
 
     public void draw(){
         clear();
+        fill(0);
+        rect(0,0,_width,_height);
+
         _context.update();
 
-        image(_context.depthImage(), 0, 0);
+        //System.out.println(loader.getResource("resources/us_map.png"));
+        image(_background, 0, 0);
 
-//        _button.update(_context, _users);
-//        _button.drawInContext(this);
+        PImage userImage = _context.userImage();
+        userImage.filter(THRESHOLD, 0.9f);
+        PImage rgbImage = _context.rgbImage();
+        rgbImage.mask(userImage);
+        image(rgbImage, 0, 0);
 
-        _slider.update(_context, _users);
-        _slider.drawInContext(this);
+        for (IControl control : _pageControls) {
+            control.update(_context, _users);
+            control.drawInContext(this);
+            System.out.println("current page " + _currentPage);
+        }
+
+        for (IControl control : _controlsByPage.get(_currentPage)) {
+            control.update(_context, _users);
+            control.drawInContext(this);
+        }
 
         for(int userId : _users) {
             if (_context.isTrackingSkeleton(userId)) {
@@ -72,12 +109,12 @@ public class Main extends PApplet {
     }
 
     public void drawSkeleton(int userId) {
-        fill(255, 0, 0);
+        fill(255, 255, 0);
         PVector leftHandPosition = new PVector();
         _context.getJointPositionSkeleton(userId, SimpleOpenNIConstants.SKEL_LEFT_HAND, leftHandPosition);
         drawPoint(Utils.normalizedVector(leftHandPosition));
 
-        fill(0, 0, 255);
+        fill(0, 255, 255);
         PVector rightHandPosition = new PVector();
         _context.getJointPositionSkeleton(userId, SimpleOpenNIConstants.SKEL_RIGHT_HAND, rightHandPosition);
         drawPoint(Utils.normalizedVector(rightHandPosition));

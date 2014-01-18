@@ -9,7 +9,7 @@ import java.util.*;
 /**
  * Created by nate on 1/18/14.
  */
-public class Slider {
+public class Slider implements IControl {
 
     public enum Orientation {
         SliderOrientationHorizontal,
@@ -38,6 +38,20 @@ public class Slider {
         _bounds = bounds;
         _slider = slider;
         _orientation = orientation;
+    }
+
+    public void setValue(float value) {
+        if (_orientation == Orientation.SliderOrientationVertical) {
+            _slider = _slider.centered(new PVector(
+                    _bounds.x + _bounds.width / 2,
+                    _bounds.y + _bounds.height * value
+            ));
+        } else {
+            _slider = _slider.centered(new PVector(
+                    _bounds.x + _bounds.width * value,
+                    _bounds.y + _bounds.height / 2
+            ));
+        }
     }
 
     public float getValue() {
@@ -69,9 +83,9 @@ public class Slider {
         System.out.println(position);
         if(_entryVector.z - position.z > deltaZThreshold) {
             if (_orientation == Orientation.SliderOrientationVertical) {
-                _slider.y = (int)position.y;
+                _slider.y = (int)position.y - _slider.height / 2;
             } else {
-                _slider.x = (int)position.x;
+                _slider.x = (int)position.x - _slider.width / 2;
             }
         }
     }

@@ -25,11 +25,23 @@ public class Utils {
             return x + width > vector.x && vector.x > x &&
                     y + height > vector.y && vector.y > y;
         }
+        public Rect inset(int inset){
+            return new Rect(this.x - inset,
+                    this.y - inset,
+                    this.width - inset*2,
+                    this.height - inset*2);
+        }
+        public Rect centered(PVector point) {
+            return new Rect((int)point.x - this.width / 2,
+                    (int)point.y - this.height / 2,
+                    this.width,
+                    this.height);
+        }
     }
 
     public static PVector normalizedVector(PVector vector) {
-        return new PVector((vector.x / 2000.f + 0.5f) * 640.f,
-                (vector.y / -1000.f + 0.5f) * 480.f,
+        return new PVector((vector.x / vector.z) * 640.f + 320.f,
+                (vector.y / -vector.z) * 480.f + 240.f,
                 (vector.z / 1000.f));
     }
 
