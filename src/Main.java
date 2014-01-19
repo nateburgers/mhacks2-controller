@@ -95,9 +95,30 @@ public class Main extends PApplet {
             button.addListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent actionEvent) {
-                    System.out.println("actived!!!!");
+
+                    Controller controller = new Controller();
+                    Wunderground10DayResponse response = null;
+                    try {
+                        response = controller.get10Day(fuckIt);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+
                     Set<IControl> controls = new HashSet<IControl>();
-                    controls.add(new DetailControl(fuckIt, "today"));
+                    String[] days = {"Today", "Tomorrow", "Tuesday"};
+                    for (int i=0; i<days.length; i++) {
+                        controls.add(new DetailControl(
+                                fuckIt,
+                                days[i],
+                                response.getForcastDays().get(i),
+                                new Utils.Rect(i*(_width/3),30,(_width/3),_height-60).inset(_inset)
+                        ));
+                    }
+                    Button button = (Button)_pageControls.get(0);
+                    button.setOn(false);
+                    Button button2 = (Button)_pageControls.get(2);
+                    button2.setOn(false);
                     _controlsByPage.set(1, controls);
                     _currentPage = 1;
                 }
@@ -106,7 +127,7 @@ public class Main extends PApplet {
             button.setOnHoverListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent actionEvent) {
-                    PointButton button = (PointButton)actionEvent.getSource();
+                    PointButton button = (PointButton) actionEvent.getSource();
                     _currentTitle = button.getCityName();
                 }
             });
@@ -194,10 +215,10 @@ public class Main extends PApplet {
 
     public void onNewUser(SimpleOpenNI context, int userId){
         System.out.println("Tracking user " + userId);
-        if(_users.size() <= 0) {
+        //if(_users.size() <= 0) {
             context.startTrackingSkeleton(userId);
             _users.add(userId);
-        }
+        //}
     }
 
     public void onLostUser(SimpleOpenNI context, int userId){
