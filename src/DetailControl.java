@@ -40,15 +40,22 @@ public class DetailControl implements IControl {
         }
 
         PImage mutableIcon = new PImage(icon.width*2,icon.height*2);
-        mutableIcon.copy(icon,0,0,icon.width,icon.height,0,0,icon.width*2,icon.height*2);
-        float iconCenterY = _bounds.width / 2;
-        float iconCenterX = _bounds.width / 2;
+        mutableIcon.copy(icon, 0, 0, icon.width, icon.height, 0, 0, icon.width * 2, icon.height * 2);
+        float iconCenterY = _bounds.y + _bounds.width / 2;
+        float iconCenterX = _bounds.x + _bounds.width / 2;
         float iconX = iconCenterX - mutableIcon.width / 2;
         float iconY = iconCenterY - mutableIcon.height / 2;
         applet.image(mutableIcon, iconX, iconY);
 
         applet.fill(255);
-        applet.textSize(icon.height);
+        applet.textSize(40);
+        
+        String lowText = "Low\n" + ((Integer)_forecast.getLow()).toString();
+        String highText = "High\n" + ((Integer)_forecast.getHigh()).toString();
+
+        applet.text(lowText, _bounds.x + 5, _bounds.y + _bounds.height / 2);
+        applet.text(highText, _bounds.x + _bounds.width - 5 - applet.textWidth(highText),
+                _bounds.y + _bounds.height / 2);
 
     }
 }

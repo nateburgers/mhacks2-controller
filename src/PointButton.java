@@ -127,11 +127,11 @@ public class PointButton implements IControl {
             applet.image(image,_movedPosition.x-image.width/2,_movedPosition.y-image.height/2);
         }
         //applet.text(_cityName, _position.x - _diameter /2 - 10, _position.y - _diameter/2 - 5);
-        float temperatureTextHeight = _diameter / 1.4f;
-        applet.textSize(temperatureTextHeight);
-        applet.fill(255);
-        String temperatureString = ((Integer)_temperature).toString();
-        float temperatureTextWidth = applet.textWidth(temperatureString);
-        applet.text(temperatureString, _position.x-temperatureTextWidth/2, _position.y+temperatureTextHeight/2);
+        //float temperatureTextHeight = _diameter / 1.4f;
+        //applet.textSize(temperatureTextHeight);
+        //applet.fill(255);
+        //String temperatureString = ((Integer)_temperature).toString();
+        //float temperatureTextWidth = applet.textWidth(temperatureString);
+        //applet.text(temperatureString, _position.x-temperatureTextWidth/2, _position.y+temperatureTextHeight/2);
     }
 }

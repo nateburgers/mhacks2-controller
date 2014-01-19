@@ -12,6 +12,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -34,7 +35,7 @@ public class WundergroundAnimation {
 
         lock = new ReentrantLock();
 
-        final String url = "http://api.wunderground.com/api/310edd12b9023998/satellite/q/" + locString + ".gif?width=640&height=480&basemap=1&num=1&frame=";
+        final String url = "http://api.wunderground.com/api/310edd12b9023998/satellite/q/" + locString + ".png?width=640&height=480&basemap=1&num=1&frame=";
 
 
         Thread t = new Thread(){
@@ -60,10 +61,19 @@ public class WundergroundAnimation {
 
                         BufferedInputStream rd = new BufferedInputStream( response.getEntity().getContent() );
 
-                        String file_uri = "data/img_" + i + ".gif";
+                        // String file_uri = "../src/data/img_" + i + ".gif";
+                        ClassLoader cl = Main.class.getClassLoader();
+                        String file_uri = "/tmp/tmpimg_" + i + ".png" ;
+
+                        System.out.println( file_uri );
 
 
-                        FileOutputStream out = new FileOutputStream(file_uri);
+
+
+
+
+
+                        FileOutputStream out = new FileOutputStream( file_uri );
 
                         int chr;
                         while( (chr = rd.read()) != -1 ){
@@ -90,7 +100,7 @@ public class WundergroundAnimation {
         };
 
 
-        t.run();
+        t.start();
 
 
     }

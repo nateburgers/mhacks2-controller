@@ -11,10 +11,14 @@ import java.util.*;
  */
 public class Slider implements IControl {
 
+    private List<ActionListener> _listeners;
+
     public enum Orientation {
         SliderOrientationHorizontal,
         SliderOrientationVertical,
     };
+
+
 
     private Utils.Rect _bounds;
     private Utils.Rect _slider;
@@ -38,6 +42,8 @@ public class Slider implements IControl {
         _bounds = bounds;
         _slider = slider;
         _orientation = orientation;
+
+        _listeners = new LinkedList<ActionListener>();
     }
 
     public void setValue(float value) {
@@ -87,7 +93,15 @@ public class Slider implements IControl {
             } else {
                 _slider.x = (int)position.x - _slider.width / 2;
             }
+
+
+            // notify
+            for( ActionListener listener : _listeners ){
+                listener.actionPerformed(new ActionEvent(this, 1, "kthxbai"));
+            }
         }
+
+
     }
 
     public void drawInContext(PApplet applet) {
@@ -101,5 +115,17 @@ public class Slider implements IControl {
             applet.line(_bounds.x, originCenterY, _bounds.x + _bounds.width, originCenterY);
             applet.rect(_slider.x, _slider.y, _slider.width, _slider.height);
         }
+    }
+
+
+
+
+    public void addListener(ActionListener listener) {
+
+        _listeners.add(listener);
+    }
+
+    public void removeListener(ActionListener listener) {
+        _listeners.remove(listener);
     }
 }

@@ -2,7 +2,6 @@
  * Created by nate on 1/18/14.
  */
 
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -20,14 +19,23 @@ public class Main extends PApplet {
     private static int _inset = 10;
     private Set<Integer> _users;
 
-    private PImage _background;
+    private int lastFrameNo = -1;
+
+    private WundergroundAnimation _animation = new WundergroundAnimation( "NY/New_York");
+
+
+    private static PImage _background;
+    private static PImage origBG;
 
     private static int _pages = 3;
     private int _currentPage;
     private ArrayList<IControl> _pageControls;
     private ArrayList<Set<IControl>> _controlsByPage;
+    private Slider theSlider;
+    private Button _drawToggle;
 
     private String _currentTitle = "";
+    private PImage _backgroundNext;
 
     public Main() {
 
@@ -42,7 +50,7 @@ public class Main extends PApplet {
     }
 
     public static void main(String[] args) {
-        PApplet.main(new String[]{ "--present", "SomeSketch"});
+        PApplet.main(new String[]{"--present", "SomeSketch"});
     }
 
     public void setup(){
@@ -53,7 +61,8 @@ public class Main extends PApplet {
         if (_context.enableUser(this)) System.out.println("farts");
 
         ClassLoader loader = Main.class.getClassLoader();
-        _background = loadImage(loader.getResource("resources/us_map.png").toString());
+
+        _background = origBG = _backgroundNext = loadImage(loader.getResource("resources/us_map.png").toString());
 
         for(int i=0; i<_pages; i++) {
             Button button = new Button(
@@ -72,6 +81,22 @@ public class Main extends PApplet {
             });
             _pageControls.add(button);
         }
+
+
+        // make a new slider
+        theSlider = Slider.HorizontalSlider( new Utils.Rect(220, 350, 300, 50));
+        _controlsByPage.get(2).add( theSlider );
+
+//        theSlider.addListener( new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//
+//                int frame = (int) ((((Slider)(e.getSource())).getValue() * 16)) + 8;  // It's magic!!!!
+//                System.out.println( "showing frame " + frame );
+//
+//            }
+//        });
+
 
         String[] capitals = Utils.capitals();
         for (int i=0; i < capitals.length; i += 3) {
@@ -104,6 +129,7 @@ public class Main extends PApplet {
                         e.printStackTrace();
                     }
 
+                    _animation = new WundergroundAnimation(fuckIt);
 
                     Set<IControl> controls = new HashSet<IControl>();
                     String[] days = {"Today", "Tomorrow", "Tuesday"};
@@ -165,6 +191,20 @@ public class Main extends PApplet {
         rect(0,0,_width,_height);
 
         _context.update();
+
+        System.out.println( theSlider.getValue() );
+        int frameNo = (int)(-1 * theSlider.getValue() * 16);
+        if( _currentPage == 2 && frameNo != lastFrameNo){
+            _background = loadImage( "/tmp/tmpimg_" + frameNo + ".png" );
+            lastFrameNo = frameNo;
+        }
+        else if(_currentPage != 2 && _background != origBG){
+            _background = origBG;
+            lastFrameNo = -1;
+        }
+        System.out.println(_background);
+        System.out.printf(" %d x %d \n", _background.width, _background.height);
+
         image(_background, 0, 0);
 
         PImage userImage = _context.userImage();
@@ -177,6 +217,7 @@ public class Main extends PApplet {
             control.update(_context, _users);
             control.drawInContext(this);
         }
+
 
         for (IControl control : _controlsByPage.get(_currentPage)) {
             control.update(_context, _users);
@@ -210,7 +251,7 @@ public class Main extends PApplet {
     }
 
     public void drawPoint(PVector victor){
-        ellipse(victor.x, victor.y, 20,20);
+        ellipse(victor.x, victor.y, 20, 20);
     }
 
     public void onNewUser(SimpleOpenNI context, int userId){
@@ -243,5 +284,12 @@ public class Main extends PApplet {
 
     public void onNewGesture(SimpleOpenNI context, int gId){
         System.out.println("asdfasdfasdfasdf");
+    }
+
+
+    public   void set_background( String uri ){
+        System.out.println( "URI    " + uri );
+        _backgroundNext = requestImage( uri );
+
     }
 }

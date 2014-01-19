@@ -39,8 +39,8 @@ public class Utils {
                     y + height > vector.y && vector.y > y;
         }
         public Rect inset(int inset){
-            return new Rect(this.x - inset,
-                    this.y - inset,
+            return new Rect(this.x + inset,
+                    this.y + inset,
                     this.width - inset*2,
                     this.height - inset*2);
         }
