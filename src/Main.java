@@ -20,6 +20,7 @@ public class Main extends PApplet {
     private Set<Integer> _users;
 
     private int lastFrameNo = -1;
+    private String longAssStringContainingESPNTitlesSeparatedByASpecialSupriseAsciiCharacter = "";
 
     private WundergroundAnimation _animation = new WundergroundAnimation( "NY/New_York");
 
@@ -36,6 +37,8 @@ public class Main extends PApplet {
 
     private String _currentTitle = "";
     private PImage _backgroundNext;
+
+    private int loopCount = 0;
 
     public Main() {
 
@@ -59,6 +62,17 @@ public class Main extends PApplet {
         _context.enableDepth();
         _context.enableRGB();
         if (_context.enableUser(this)) System.out.println("farts");
+
+
+        longAssStringContainingESPNTitlesSeparatedByASpecialSupriseAsciiCharacter ="";
+        try {
+            for( String s : (new ESPNApi()).getTitles() ){
+                    longAssStringContainingESPNTitlesSeparatedByASpecialSupriseAsciiCharacter += s + (char)149;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
 
         ClassLoader loader = Main.class.getClassLoader();
 
@@ -166,7 +180,6 @@ public class Main extends PApplet {
                         SimpleWundergroundResponse response = controller.getCityWeather(fuckIt);
                         double temp = response.getTemp();
                         String iconURL = response.getIcon();
-                        System.out.println(iconURL);
                         Utils.cacheImage(iconURL, loadImage(iconURL));
 
                         shipIt.setTemperature((int) temp);
@@ -192,7 +205,6 @@ public class Main extends PApplet {
 
         _context.update();
 
-        System.out.println( theSlider.getValue() );
         int frameNo = (int)(-1 * theSlider.getValue() * 16);
         if( _currentPage == 2 && frameNo != lastFrameNo){
             _background = loadImage( "/tmp/tmpimg_" + frameNo + ".png" );
@@ -202,8 +214,7 @@ public class Main extends PApplet {
             _background = origBG;
             lastFrameNo = -1;
         }
-        System.out.println(_background);
-        System.out.printf(" %d x %d \n", _background.width, _background.height);
+
 
         image(_background, 0, 0);
 
@@ -212,6 +223,7 @@ public class Main extends PApplet {
         PImage rgbImage = _context.rgbImage();
         rgbImage.mask(userImage);
         image(rgbImage, 0, 0);
+
 
         for (IControl control : _pageControls) {
             control.update(_context, _users);
@@ -233,9 +245,27 @@ public class Main extends PApplet {
         fill(0);
         textSize(26);
         rect(_width/2-50,4,textWidth(_currentTitle), 28);
-
         fill(255);
+
+
+
         text(_currentTitle, _width/2-50, 30);
+
+
+
+        rect( 0, 455, _width, _height - 455 );
+        fill(0,0,0); // black
+        textSize( 16 );
+        text(longAssStringContainingESPNTitlesSeparatedByASpecialSupriseAsciiCharacter.substring( loopCount / 12, loopCount / 12 + 90), 0, 470);
+
+        fill(255, 255, 255);
+
+
+        loopCount++;
+
+
+
+
     }
 
     public void drawSkeleton(int userId) {
