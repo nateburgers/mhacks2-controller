@@ -1,9 +1,11 @@
 import SimpleOpenNI.SimpleOpenNI;
 import processing.core.PApplet;
+import processing.core.PImage;
 import processing.core.PVector;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.nio.channels.Pipe;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,6 +37,7 @@ public class PointButton implements IControl {
 
     private String _cityName;
     private int _temperature;
+    private String _imageURL;
 
     public PointButton(int x, int y, String cityName, int temperature){
         _position = new PVector(x,y);
@@ -63,6 +66,10 @@ public class PointButton implements IControl {
 
     public String getCityName() {
         return _cityName;
+    }
+
+    public void setImage(String url) {
+        _imageURL = url;
     }
 
     public void setTemperature(int temp) {
@@ -112,8 +119,13 @@ public class PointButton implements IControl {
         applet.strokeWeight(2.0f);
         applet.stroke(0);
         applet.line(_position.x, _position.y, _movedPosition.x, _movedPosition.y);
-        applet.fill(0);
-        applet.ellipse(_movedPosition.x, _movedPosition.y, _diameter, _diameter);
+        PImage image = Utils.getImage(_imageURL);
+        if (image == null) {
+            applet.fill(0);
+            applet.ellipse(_movedPosition.x, _movedPosition.y, _diameter, _diameter);
+        } else {
+            applet.image(image,_movedPosition.x-image.width/2,_movedPosition.y-image.height/2);
+        }
         //applet.text(_cityName, _position.x - _diameter /2 - 10, _position.y - _diameter/2 - 5);
         float temperatureTextHeight = _diameter / 1.4f;
         applet.textSize(temperatureTextHeight);

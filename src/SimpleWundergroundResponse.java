@@ -20,7 +20,7 @@ public class SimpleWundergroundResponse {
     }
 
     public String getIcon(){
-        return current_observation.icon;
+        return "http://icons.wxug.com/i/c/i/" + current_observation.icon + ".gif";
     }
 
 

@@ -116,8 +116,14 @@ public class Main extends PApplet {
                 public void run() {
                     Controller controller = new Controller();
                     try {
-                        double temp = controller.getCityWeather(fuckIt).getTemp();
+                        SimpleWundergroundResponse response = controller.getCityWeather(fuckIt);
+                        double temp = response.getTemp();
+                        String iconURL = response.getIcon();
+                        System.out.println(iconURL);
+                        Utils.cacheImage(iconURL, loadImage(iconURL));
+
                         shipIt.setTemperature((int) temp);
+                        shipIt.setImage(iconURL);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -162,8 +168,11 @@ public class Main extends PApplet {
             }
         }
 
-        fill(0,0,255);
+        fill(0);
         textSize(26);
+        rect(_width/2-50,4,textWidth(_currentTitle), 28);
+
+        fill(255);
         text(_currentTitle, _width/2-50, 30);
     }
 

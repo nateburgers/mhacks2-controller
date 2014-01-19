@@ -9,6 +9,16 @@ import java.util.HashMap;
  */
 public class Utils {
 
+    private static HashMap<String, PImage> _imageCache = new HashMap<String, PImage>();
+
+    public static void cacheImage(String url, PImage image) {
+        _imageCache.put(url, image);
+    }
+
+    public static PImage getImage(String url) {
+        return _imageCache.get(url);
+    }
+
     public static class Rect {
         public int x;
         public int y;
