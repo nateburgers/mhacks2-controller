@@ -24,13 +24,14 @@ public class PointButton implements IControl {
     private PVector _movedPosition;
     private float _diameter = 20.f;
     private static final float _minDiameter = 20.f;
-    private static final float _maxDiameter = 50.f;
+    private static final float _maxDiameter = 120.f;
 
     private boolean _triggered = false;
     private PVector _entryVector;
-    private float deltaZThreshold = 0.07f;
+    private float deltaZThreshold = 0.10f;
 
     private Set<ActionListener> _listeners;
+    private ActionListener _hoverListener;
 
     private String _cityName;
     private int _temperature;
@@ -54,10 +55,14 @@ public class PointButton implements IControl {
                 if (leftHandDistance < rightHandDistance) {
                     updatePositionWithHand(leftHand, leftHandDistance);
                 } else {
-                    updatePositionWithHand(rightHand, rightHandDistance);
+                    //updatePositionWithHand(rightHand, rightHandDistance);
                 }
             }
         }
+    }
+
+    public String getCityName() {
+        return _cityName;
     }
 
     public void setTemperature(int temp) {
@@ -66,6 +71,10 @@ public class PointButton implements IControl {
 
     public void addListener(ActionListener listener) {
         _listeners.add(listener);
+    }
+
+    public void setOnHoverListener(ActionListener listener) {
+        _hoverListener = listener;
     }
 
     public void updatePositionWithHand(PVector hand, float distance) {
@@ -81,12 +90,14 @@ public class PointButton implements IControl {
             _movedPosition.x = _position.x + normalX * (float)Math.sqrt(distance);
 
             if (distance <= _diameter) {
-                _entryVector = _entryVector == null ? new PVector(hand.x,hand.y) : _entryVector;
+                _entryVector = _entryVector == null ? hand : _entryVector;
                 if (_entryVector.z - hand.z > deltaZThreshold) {
                     _entryVector = null;
                     for (ActionListener listener : _listeners) {
                         listener.actionPerformed(new ActionEvent(this, 1, "lol"));
                     }
+                } else {
+                    _hoverListener.actionPerformed(new ActionEvent(this, 1, "lol"));
                 }
             }
         } else {
@@ -103,8 +114,12 @@ public class PointButton implements IControl {
         applet.line(_position.x, _position.y, _movedPosition.x, _movedPosition.y);
         applet.fill(0);
         applet.ellipse(_movedPosition.x, _movedPosition.y, _diameter, _diameter);
-        applet.text(_cityName, _position.x - _diameter /2 - 10, _position.y - _diameter/2 - 5);
+        //applet.text(_cityName, _position.x - _diameter /2 - 10, _position.y - _diameter/2 - 5);
+        float temperatureTextHeight = _diameter / 1.4f;
+        applet.textSize(temperatureTextHeight);
         applet.fill(255);
-        applet.text(((Integer)_temperature).toString(), _position.x-_diameter/4, _position.y+_diameter/4);
+        String temperatureString = ((Integer)_temperature).toString();
+        float temperatureTextWidth = applet.textWidth(temperatureString);
+        applet.text(temperatureString, _position.x-temperatureTextWidth/2, _position.y+temperatureTextHeight/2);
     }
 }

@@ -10,7 +10,6 @@ public class SimpleWundergroundResponse {
         public double temp_f;
         public String icon;
 
-
         public Current_observation(){
 
         }

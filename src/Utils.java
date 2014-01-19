@@ -1,5 +1,8 @@
 import SimpleOpenNI.SimpleOpenNI;
+import processing.core.PImage;
 import processing.core.PVector;
+
+import java.util.HashMap;
 
 /**
  * Created by nate on 1/18/14.

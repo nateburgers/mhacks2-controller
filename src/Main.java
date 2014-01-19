@@ -27,6 +27,8 @@ public class Main extends PApplet {
     private ArrayList<IControl> _pageControls;
     private ArrayList<Set<IControl>> _controlsByPage;
 
+    private String _currentTitle = "";
+
     public Main() {
 
         assert Utils.percentileInRange(0,100,55) == 0.55;
@@ -86,9 +88,28 @@ public class Main extends PApplet {
             PointButton button = new PointButton(x,_height - y, name, 0);
             _controlsByPage.get(0).add(button);
 
+
             final String fuckIt = name;
             final PointButton shipIt = button;
 
+            button.addListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent actionEvent) {
+                    System.out.println("actived!!!!");
+                    Set<IControl> controls = new HashSet<IControl>();
+                    controls.add(new DetailControl(fuckIt, "today"));
+                    _controlsByPage.set(1, controls);
+                    _currentPage = 1;
+                }
+            });
+
+            button.setOnHoverListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent actionEvent) {
+                    PointButton button = (PointButton)actionEvent.getSource();
+                    _currentTitle = button.getCityName();
+                }
+            });
 
             Runnable r = new Runnable() {
                 @Override
@@ -96,7 +117,7 @@ public class Main extends PApplet {
                     Controller controller = new Controller();
                     try {
                         double temp = controller.getCityWeather(fuckIt).getTemp();
-                        shipIt.setTemperature((int)temp);
+                        shipIt.setTemperature((int) temp);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -140,6 +161,10 @@ public class Main extends PApplet {
                 drawSkeleton(userId);
             }
         }
+
+        fill(0,0,255);
+        textSize(26);
+        text(_currentTitle, _width/2-50, 30);
     }
 
     public void drawSkeleton(int userId) {
@@ -160,12 +185,15 @@ public class Main extends PApplet {
 
     public void onNewUser(SimpleOpenNI context, int userId){
         System.out.println("Tracking user " + userId);
-        context.startTrackingSkeleton(userId);
-        _users.add(userId);
+        if(_users.size() <= 0) {
+            context.startTrackingSkeleton(userId);
+            _users.add(userId);
+        }
     }
 
     public void onLostUser(SimpleOpenNI context, int userId){
-        System.out.println("Lost user " + userId);
+        _users.remove(userId);
+        _context.stopTrackingSkeleton(userId);
     }
 
     public void onVisibleUser(SimpleOpenNI context, int userId){
