@@ -34,7 +34,7 @@ public class WundergroundAnimation {
 
         lock = new ReentrantLock();
 
-        final String url = "http://api.wunderground.com/api/310edd12b9023998/satellite/q/KS/Topeka.gif?width=640&height=480&basemap=1&num=1&frame=";
+        final String url = "http://api.wunderground.com/api/310edd12b9023998/satellite/q/" + locString + ".gif?width=640&height=480&basemap=1&num=1&frame=";
 
 
         Thread t = new Thread(){
