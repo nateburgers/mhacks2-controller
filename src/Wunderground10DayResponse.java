@@ -71,7 +71,7 @@ class ForecastDay{
     }
 
     public String getIcon() {
-        return "http://icons.wxug.com/i/c/i/" + icon + "gif";
+        return "http://icons.wxug.com/i/c/i/" + icon + ".png";
     }
 
 
