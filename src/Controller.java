@@ -11,7 +11,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-public class Controller {
+public class Controller extends JSONApi {
     private final Gson gson;
     String APIKEY = "310edd12b9023998";
     private final String USER_AGENT = "Mozilla/5.0";
@@ -129,26 +129,5 @@ public class Controller {
 
 
 
-    public String getJson( String url ) throws Exception{
 
-        HttpClient client = new DefaultHttpClient();
-        HttpGet request = new HttpGet(url);
-
-        // add request header
-        request.addHeader("User-Agent", USER_AGENT);
-
-        HttpResponse response = client.execute(request);
-
-
-
-        BufferedReader rd = new BufferedReader( new InputStreamReader(response.getEntity().getContent()));
-        String json = "";
-        String line = "";
-        while((line = rd.readLine()) != null){
-            json += line;
-
-        }
-
-        return json;
-    }
 }
