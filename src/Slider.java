@@ -1,5 +1,6 @@
 import SimpleOpenNI.SimpleOpenNI;
 import processing.core.PApplet;
+import processing.core.PImage;
 import processing.core.PVector;
 
 import java.awt.event.ActionEvent;
@@ -26,6 +27,8 @@ public class Slider implements IControl {
 
     private PVector _entryVector;
 
+    private String _imageName;
+
     private static float deltaZThreshold = 0.03f;
 
     static Slider VerticalSlider(Utils.Rect bounds) {
@@ -44,6 +47,10 @@ public class Slider implements IControl {
         _orientation = orientation;
 
         _listeners = new LinkedList<ActionListener>();
+    }
+
+    public void setImage(String imageName) {
+        _imageName = imageName;
     }
 
     public void setValue(float value) {
@@ -105,15 +112,30 @@ public class Slider implements IControl {
     }
 
     public void drawInContext(PApplet applet) {
+        PImage image = Utils.getImage(_imageName);
+        if (image == null && !(_imageName == null)) {
+            ClassLoader loader = Main.class.getClassLoader();
+            image = applet.loadImage(loader.getResource(_imageName).toString());
+            image.resize(_slider.width,_slider.height);
+            Utils.cacheImage(_imageName, image);
+        }
+
         applet.stroke(0, 0, 255);
         if (_orientation == Orientation.SliderOrientationVertical) {
             int originCenterX = _bounds.x + _bounds.width / 2;
             applet.line(originCenterX, _bounds.y, originCenterX, _bounds.y+_bounds.height);
-            applet.rect(_slider.x, _slider.y, _slider.width, _slider.height);
+            if (image == null || _imageName == null) applet.rect(_slider.x, _slider.y, _slider.width, _slider.height);
+            else {
+                applet.image(image, this._slider.x, this._slider.y);
+            }
         } else {
             int originCenterY = _bounds.y + _bounds.height / 2;
             applet.line(_bounds.x, originCenterY, _bounds.x + _bounds.width, originCenterY);
-            applet.rect(_slider.x, _slider.y, _slider.width, _slider.height);
+            //applet.rect(_slider.x, _slider.y, _slider.width, _slider.height);
+            if (image == null || _imageName == null) applet.rect(_slider.x, _slider.y, _slider.width, _slider.height);
+            else {
+                applet.image(image, this._slider.x, this._slider.y);
+            }
         }
     }
 

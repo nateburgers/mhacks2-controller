@@ -1,6 +1,7 @@
 import SimpleOpenNI.SimpleOpenNI;
 import com.sun.accessibility.internal.resources.accessibility;
 import processing.core.PApplet;
+import processing.core.PImage;
 import processing.core.PVector;
 
 import java.awt.event.ActionEvent;
@@ -21,6 +22,7 @@ public class Button implements IControl {
     private PVector _entryVector;
     private boolean _active = false;
     private boolean _triggered = false;
+    private String _imageName;
 
     private Object _callbackData;
 
@@ -56,13 +58,35 @@ public class Button implements IControl {
         }
     }
 
+    public void setImage(String imageName) {
+        _imageName = imageName;
+    }
+
     public void drawInContext(PApplet applet) {
-        if (_on) {
-            applet.fill(255, 0, 0);
-        } else {
-            applet.fill(0,255,0);
+        PImage image = Utils.getImage(_imageName);
+        if (image == null && !(_imageName == null)) {
+            ClassLoader loader = Main.class.getClassLoader();
+            image = applet.loadImage(loader.getResource(_imageName).toString());
+            image.resize(_width,_height);
+            Utils.cacheImage(_imageName, image);
         }
-        applet.rect(_x, _y, _width, _height);
+
+        if (_imageName == null) {
+            if (_on) {
+                applet.fill(255, 0, 0);
+            } else {
+                applet.fill(0,255,0);
+            }
+            applet.rect(_x, _y, _width, _height);
+        } else {
+            if (_on) {
+                applet.tint(0, 153, 204);
+                applet.image(image, _x, _y);
+                applet.noTint();
+            } else {
+                applet.image(image, _x, _y);
+            }
+        }
     }
 
     public boolean containsPoint(PVector vector){
@@ -77,6 +101,10 @@ public class Button implements IControl {
     public void setOn(boolean active) {
         _triggered = active;
         _on = active;
+    }
+
+    public boolean isOn() {
+        return _on;
     }
 
     public void addListener(ActionListener listener) {

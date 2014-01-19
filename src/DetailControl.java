@@ -49,6 +49,10 @@ public class DetailControl implements IControl {
 
         applet.fill(255);
         applet.textSize(40);
+
+        float titleY = _bounds.y + 40;
+        float titleX = _bounds.x + _bounds.width/2 - applet.textWidth(_title)/2;
+        applet.text(_title, titleX, titleY);
         
         String lowText = "Low\n" + ((Integer)_forecast.getLow()).toString();
         String highText = "High\n" + ((Integer)_forecast.getHigh()).toString();

@@ -4,6 +4,7 @@
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.PipedInputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -34,6 +35,7 @@ public class Main extends PApplet {
     private ArrayList<Set<IControl>> _controlsByPage;
     private Slider theSlider;
     private Button _drawToggle;
+    private PGraphics _drawFrame;
 
     private String _currentTitle = "";
     private PImage _backgroundNext;
@@ -63,6 +65,19 @@ public class Main extends PApplet {
         _context.enableRGB();
         if (_context.enableUser(this)) System.out.println("farts");
 
+        _drawFrame = createGraphics(_width,_height);
+        _drawToggle = new Button(new Utils.Rect(0,_cellSize*4,_cellSize,_cellSize).inset(_inset));
+        _drawToggle.setImage("resources/edit.png");
+        _drawToggle.addListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                Button button = (Button)actionEvent.getSource();
+                if (!button.isOn()) {
+                    _drawFrame.clear();
+                }
+            }
+        });
+
 
         longAssStringContainingESPNTitlesSeparatedByASpecialSupriseAsciiCharacter ="";
         try {
@@ -78,9 +93,12 @@ public class Main extends PApplet {
 
         _background = origBG = _backgroundNext = loadImage(loader.getResource("resources/us_map.png").toString());
 
+        String[] rightButtonImageNames = {"resources/map_pin.png",
+                "resources/calendar.png", "resources/cloud.png"};
         for(int i=0; i<_pages; i++) {
             Button button = new Button(
                     new Utils.Rect(_cellSize*7,_cellSize*(i+1),_cellSize,_cellSize).inset(_inset));
+            button.setImage(rightButtonImageNames[i]);
             button.addListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent actionEvent) {
@@ -99,6 +117,7 @@ public class Main extends PApplet {
 
         // make a new slider
         theSlider = Slider.HorizontalSlider( new Utils.Rect(220, 350, 300, 50));
+        theSlider.setImage("resources/fast_forward.png");
         _controlsByPage.get(2).add( theSlider );
 
 //        theSlider.addListener( new ActionListener() {
@@ -224,6 +243,8 @@ public class Main extends PApplet {
         rgbImage.mask(userImage);
         image(rgbImage, 0, 0);
 
+        _drawToggle.update(_context, _users);
+        _drawToggle.drawInContext(this);
 
         for (IControl control : _pageControls) {
             control.update(_context, _users);
@@ -242,20 +263,29 @@ public class Main extends PApplet {
             }
         }
 
+        if (_drawToggle.isOn()) {
+            _drawFrame.beginDraw();
+            for (int userId : _users) {
+                int drawEllipseSize = 15;
+                PVector rightHand = Utils.normalizedRightHand(_context, userId);
+                _drawFrame.fill(0,255,255);
+                _drawFrame.ellipse(rightHand.x, rightHand.y, drawEllipseSize, drawEllipseSize);
+            }
+            _drawFrame.endDraw();
+            image(_drawFrame, 0, 0);
+        }
+
         fill(0);
         textSize(26);
-        rect(_width/2-50,4,textWidth(_currentTitle), 28);
+        rect(_width/2-textWidth(_currentTitle)/2, 5, textWidth(_currentTitle), 30);
         fill(255);
-
-
-
-        text(_currentTitle, _width/2-50, 30);
+        text(_currentTitle, _width / 2 - textWidth(_currentTitle)/2, 30);
 
 
 
         rect( 0, 455, _width, _height - 455 );
         fill(0,0,0); // black
-        textSize( 16 );
+        textSize(16);
         text(longAssStringContainingESPNTitlesSeparatedByASpecialSupriseAsciiCharacter.substring( loopCount / 12, loopCount / 12 + 90), 0, 470);
 
         fill(255, 255, 255);
